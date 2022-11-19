@@ -4,27 +4,27 @@ import { Container } from './styles';
 
 const orders: Order[] = [
   {
-    '_id': '6372e48cbcd195b0d3d0f7f3',
-    'table': '123',
+    '_id': '63747ac46ff584bf2fba9969',
+    'table': '4',
     'status': 'WAITING',
     'products': [
       {
         'product': {
           'name': 'Pizza quatro queijos',
-          'imagePath': '1668472896991-quatro-queijos.png',
+          'imagePath': '1668566867023-quatro-queijos.png',
           'price': 40,
         },
-        'quantity': 3,
-        '_id': '6372e48cbcd195b0d3d0f7f4'
+        'quantity': 2,
+        '_id': '63747ac46ff584bf2fba996a'
       },
       {
         'product': {
           'name': 'Coca cola',
-          'imagePath': '1668473462705-coca-cola.png',
+          'imagePath': '1668568022617-coca-cola.png',
           'price': 7,
         },
         'quantity': 2,
-        '_id': '6372e48cbcd195b0d3d0f7f5'
+        '_id': '63747ac46ff584bf2fba996b'
       }
     ],
   }
