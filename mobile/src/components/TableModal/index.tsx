@@ -48,6 +48,7 @@ export function TableModal({ visible, setVisible, onSave }: TableModalProps) {
               placeholderTextColor='#666'
               keyboardType='number-pad'
               onChangeText={setTable}
+              cursorColor='#D73035'
             />
 
             <Button label='Salvar' onPress={handleSave} disabled={table.length === 0} />
