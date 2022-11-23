@@ -1,26 +1,51 @@
-import { useState } from 'react';
-
-import { products as mockProducts } from '../mocks/products';
+import { useEffect, useState } from 'react';
 
 import { ActivityIndicator } from 'react-native';
+import { CartItem } from '../types/CartItem';
+import { Product } from '../types/Product';
+
+import { Container, CategoriesContainer, MenuContainer, Footer, FooterContainer, CenteredContainer } from './styles';
+
 import { Button } from '../components/Button';
 import { Cart } from '../components/Cart';
 import { Categories } from '../components/Categories';
 import { Header } from '../components/Header';
 import { Menu } from '../components/Menu';
 import { TableModal } from '../components/TableModal';
-import { CartItem } from '../types/CartItem';
-import { Product } from '../types/Product';
-import { Container, CategoriesContainer, MenuContainer, Footer, FooterContainer, CenteredContainer } from './styles';
 import { Empty } from '../components/Icons/Empty';
 import { Text } from '../components/Text';
+import { Category } from '../types/Category';
+import { api } from '../utils/api';
 
 export function Main() {
   const [isTableModalVisible, setIsTableModalVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedTable, setSelectedTable] = useState('');
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [isLoadingProductsOfCategory, setIsLoadingProductsOfCategory] = useState(false);
+
+  useEffect(() => {
+    Promise.all([
+      api.get('/categories'),
+      api.get('/products'),
+    ]).then(([categoriesResponse, productsResponse]) => {
+      setCategories(categoriesResponse.data);
+      setProducts(productsResponse.data);
+
+      setIsLoading(false);
+    });
+
+  }, []);
+
+  async function handleSelectCategory(categoryId: string) {
+    setIsLoadingProductsOfCategory(true);
+    const route = !categoryId ? '/products' : `/categories/${categoryId}/products`;
+    const { data } = await api.get(route);
+    setProducts(data);
+    setIsLoadingProductsOfCategory(false);
+  }
 
   function handleSaveTable(table: string) {
     setSelectedTable(table);
@@ -93,21 +118,32 @@ export function Main() {
         {!isLoading ? (
           <>
             <CategoriesContainer>
-              <Categories />
+              <Categories categories={categories} onSelectCategory={handleSelectCategory} />
             </CategoriesContainer>
 
-            {products.length ? (
-              <MenuContainer>
-                <Menu onAddToCart={handleAddToCart} products={products} />
-              </MenuContainer>
-            ) : (
+            {isLoadingProductsOfCategory ? (
               <CenteredContainer>
-                <Empty />
-                <Text color='#666' style={{ marginTop: 24 }}>
-                  Nenhum produto foi encontrado!
-                </Text>
+                <ActivityIndicator color='#D73035' size='large' />
               </CenteredContainer>
+            ) : (
+              <>
+                {
+                  products.length ? (
+                    <MenuContainer>
+                      <Menu onAddToCart={handleAddToCart} products={products} />
+                    </MenuContainer>
+                  ) : (
+                    <CenteredContainer>
+                      <Empty />
+                      <Text color='#666' style={{ marginTop: 24 }}>
+                        Nenhum produto foi encontrado!
+                      </Text>
+                    </CenteredContainer>
+                  )
+                }
+              </>
             )}
+
           </>
         ) : (
           <CenteredContainer>
@@ -126,6 +162,7 @@ export function Main() {
               onAdd={handleAddToCart}
               onDecrement={handleDecrementToCart}
               onResetOrder={handleResetOrder}
+              selectedTable={selectedTable}
             />
           )}
         </FooterContainer>
