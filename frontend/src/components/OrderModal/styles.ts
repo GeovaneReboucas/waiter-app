@@ -20,7 +20,18 @@ export const ModalBody = styled.div`
   width: 480px;
   border-radius: 8px;
   padding: 2rem;
+  max-height: 80vh;
+  overflow-y: scroll;
   z-index: 99;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #c9c9c9;
+    border-radius: 20px;
+  }
 
   header{
     display: flex;
@@ -119,6 +130,11 @@ export const Actions = styled.footer`
   display: flex;
   flex-direction: column;
   gap: 8px;
+
+  button:disabled{
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
 
   .primary{
     /* width: 100%; */
